@@ -1,0 +1,72 @@
+import random # 난수 생성 모듈
+import datetime # 날짜 모듈
+import os.path
+
+record = [] # 기록 리스트
+
+# ★세 번째 수정 사항★
+if os.path.isfile('C:\\record.txt'):
+    # record.txt를 읽기 모드로 열어 \n(각 행)으로 분류하여 기록 리스트에 불러온다.
+    record = open('record.txt', 'r', encoding="UTF8").read().split('\n')
+
+while 1:
+    print("UP & DOWN 게임에 오신걸 환영합니다~")
+    print("1. 게임시작 2. 기록확인 3. 게임종료")
+    idx = input(">> ")
+
+    a = 1 # 난수 범위 최소 변수
+    b = 100 # 난수 범위 최대 변수
+    best_record = 0 # 최고 기록 변수
+
+    # 1. 게임시작
+    if (idx == "1"):
+        num = random.randrange(1,101) # 난수 범위(1~100) 설정
+        #for i in range(10): # 최대 기회(10번) 설정
+        times = 0
+        
+        # ★네 번째 수정 사항★
+        try:
+            while times <= 10:
+                times += 1
+                ans = int(input("%d번째 숫자 입력(%d~%d) : " % (times, a, b)))
+
+                # 입력 값이 범위 안에 해당하지 않을 경우
+                if ans < a or ans > b:
+                    continue
+                # 입력 값이 정답보다 작을 경우, 최소 변수 변경
+                elif ans < num:
+                    print("UP")
+                    a = ans + 1
+                # 입력 값이 정답보다 클 경우, 최대 변수 변경
+                elif ans > num:
+                    b = ans - 1
+                    print("DOWN")
+                # 입력 값과 정답이 같을 경우
+                else:
+                    print("정답입니다!!\n%d번째만에 맞추셨습니다" % times)
+                    if (len(record)) != 0:
+                        best_record = record[0].split() # 이전 최고 기록 정보
+                    if (len(record) == 0) or (times < int(best_record[1])): # 첫 번째 기록이거나 최고 기록일 경우
+                        print("최고기록 갱신~!")
+                        # ★첫 번째 수정 사항★
+                        name = input("닉네임을 입력하세요 >> ")
+                        date = datetime.date.today() # 현재 날짜
+                        result = name + " " + str(times) + " " + str(date)
+                        record.insert(0, result)
+                    break
+                if times == 10: # 입력 횟수를 초과할 경우
+                    raise # 예외 처리
+        except:
+            print("error : 입력횟수를 초과하였습니다. 게임오버!")         
+
+    # 2. 기록확인   
+    elif idx == "2":
+        for i in range(len(record)):
+            print("%d %s" % (i + 1, record[i]))
+            
+    # 3. 게임종료    
+    elif idx == "3":
+        # ★두 번째 수정 사항★
+        with open('record.txt', 'w', encoding="UTF8") as f: # 게임 기록을 record.txt에 저장
+            f.write('\n'.join(record))
+        break
