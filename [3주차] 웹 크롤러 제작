@@ -1,0 +1,35 @@
+import urllib.request
+from bs4 import BeautifulSoup
+import warnings # 'https://www.swu.ac.kr'+url 코드 오류 해결 모듈
+warnings.filterwarnings("ignore", category=UserWarning, module='bs4')
+
+print("*** 서울여자대학교 학과 및 홈페이지 정보 ***\n")
+print("학과\t\t\t\t\t홈페이지")
+
+#urlib.request의 urlopen으로 html 리소스 가져오기
+web = urllib.request.urlopen('http://www.swu.ac.kr/www/swuniversity.html')
+#BeuatifulSoup 이용하여 파싱
+soup = BeautifulSoup(web, 'html.parser')
+#li 태그 데이터(학과 이름)를 모두 추출
+tmp = soup.select("li")
+
+for num, keyword in enumerate(tmp):
+    if (keyword.text == "일반대학원"): #학과만 출력하기 위해 일반대학원 전까지 크롤링
+        break
+    print(f'{keyword.text}', end="\t\t\t\t") #학과 이름 출력
+    
+    url = keyword.find("a")["href"] #학과 버튼 클릭 시 이동하는 링크
+    web2 = urllib.request.urlopen('https://www.swu.ac.kr'+url)
+    soup2 = BeautifulSoup(web2, 'html.parser')
+    
+    # 아무 버튼이 없는 학과의 경우 따로 아래 작업을 수행할 때 오류가 발생하므로 미리 처리함
+    if (keyword.text != "공동기기실" and keyword.text != "컴퓨터학과(*)" and keyword.text != "콘텐츠디자인학과(*)"):
+        # 홈페이지 바로가기 버튼이 있는지 확인하기 위해 버튼의 text를 추출
+        tmp2 = soup2.select_one("span", {'class':'btn btn_xl btn_blue_gray'})
+        # 버튼의 text가 홈페이지 바로가기일 경우, 해당 버튼의 링크 추출
+        if (tmp2.text == "홈페이지 바로가기" or tmp2.text == "홈페이지바로가기"):
+            print((soup2.find("a", {'class':'btn btn_xl btn_blue_gray'})["href"]))
+        else:
+            print("홈페이지가 존재하지 않음")
+    else:
+        print("홈페이지가 존재하지 않음")
