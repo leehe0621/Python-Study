@@ -1,6 +1,6 @@
 import urllib.request
 from bs4 import BeautifulSoup
-import warnings # 'https://www.swu.ac.kr'+url 코드 오류 해결 모듈
+import warnings # 'https://comic.naver.com'+link 코드 오류 해결 모듈
 warnings.filterwarnings("ignore", category=UserWarning, module='bs4')
 import os
 
