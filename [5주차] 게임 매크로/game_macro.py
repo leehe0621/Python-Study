@@ -14,4 +14,4 @@ for i in range (1, 51): # 눌러야 할 버튼의 수는 50개
             btn.click()
             break
 
-    print(index.text + " 클릭")
+    print(str(i) + " 클릭")
